@@ -1,6 +1,7 @@
 
 "use client";
 
+import FormInput from "@/components/common/form-input";
 import { Button } from "@/components/ui/button";
 import {
     Card,
@@ -11,11 +12,8 @@ import {
 } from "@/components/ui/card";
 import {
     Field,
-    FieldError,
     FieldGroup,
-    FieldLabel,
 } from "@/components/ui/field";
-import { Input } from "@/components/ui/input";
 
 import { INITIAL_LOGIN_FORM } from "@/constants/auth-constanst";
 import { LoginForm, loginschema } from "@/validations/auth-validation";
@@ -24,7 +22,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 
 export default function Login() {
-
     const form = useForm<LoginForm>({
         resolver: zodResolver(loginschema),
         defaultValues: INITIAL_LOGIN_FORM,
@@ -33,7 +30,6 @@ export default function Login() {
     const onSubmit = async (data: LoginForm) => {
         console.log(data);
     };
-
 
     return (
         <Card>
@@ -50,44 +46,23 @@ export default function Login() {
             <CardContent>
                 <form onSubmit={form.handleSubmit(onSubmit)}>
                     <FieldGroup>
-
                         {/* Email */}
-                        <Field data-invalid={!!form.formState.errors.email}>
-                            <FieldLabel htmlFor="email">
-                                Email
-                            </FieldLabel>
-
-                            <Input
-                                id="email"
-                                type="email"
-                                placeholder="Masukkan email"
-                                aria-invalid={!!form.formState.errors.email}
-                                {...form.register("email")}
-                            />
-
-                            <FieldError>
-                                {form.formState.errors.email?.message}
-                            </FieldError>
-                        </Field>
+                        <FormInput
+                            form={form}
+                            name="email"
+                            label="Email"
+                            type="email"
+                            placeholder="Masukkan email"
+                        />
 
                         {/* Password */}
-                        <Field data-invalid={!!form.formState.errors.password}>
-                            <FieldLabel htmlFor="password">
-                                Password
-                            </FieldLabel>
-
-                            <Input
-                                id="password"
-                                type="password"
-                                placeholder="Masukkan password"
-                                aria-invalid={!!form.formState.errors.password}
-                                {...form.register("password")}
-                            />
-
-                            <FieldError>
-                                {form.formState.errors.password?.message}
-                            </FieldError>
-                        </Field>
+                        <FormInput
+                            form={form}
+                            name="password"
+                            label="Password"
+                            type="password"
+                            placeholder="Masukkan password"
+                        />
 
                         {/* Submit */}
                         <Field>
@@ -101,7 +76,6 @@ export default function Login() {
                                     : "Login"}
                             </Button>
                         </Field>
-
                     </FieldGroup>
                 </form>
             </CardContent>

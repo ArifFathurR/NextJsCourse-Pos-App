@@ -8,7 +8,7 @@ export const loginschema = z.object({
 
     password: z
         .string()
-        .min(8, 'Password is required')
+        .min(8, 'Password minimal 8 karakter')
 
 });
 
