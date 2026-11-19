@@ -15,21 +15,45 @@ import {
     FieldGroup,
 } from "@/components/ui/field";
 
-import { INITIAL_LOGIN_FORM } from "@/constants/auth-constanst";
-import { LoginForm, loginschema } from "@/validations/auth-validation";
+import { INITIAL_LOGIN_FORM, INITIAL_STATE_LOGIN_FORM } from "@/constants/auth-constanst";
+import { LoginForm, loginschemaFrom } from "@/validations/auth-validation";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import { startTransition, useActionState, useEffect } from "react";
 import { useForm } from "react-hook-form";
+import { login } from "../actions";
+import { Loader2 } from "lucide-react";
+import { toast } from "sonner";
 
 export default function Login() {
     const form = useForm<LoginForm>({
-        resolver: zodResolver(loginschema),
+        resolver: zodResolver(loginschemaFrom),
         defaultValues: INITIAL_LOGIN_FORM,
     });
 
+    const [loginState, loginAction, isPendingLogin] = useActionState(login, INITIAL_STATE_LOGIN_FORM);
+
     const onSubmit = async (data: LoginForm) => {
-        console.log(data);
+        const formData = new FormData();
+        Object.entries(data).forEach(([key, value])=> {
+            formData.append(key, value);
+        });
+
+        startTransition(()=> {
+            loginAction(formData);
+        });
     };
+
+    useEffect(()=> {
+        if (loginState?.status === 'error') {
+            toast.error('login failed', {
+                description: loginState.errors?._form?.[0],
+            });
+            startTransition(()=> {
+                loginAction(null);
+            });
+        }
+    },[loginState]);
 
     return (
         <Card>
@@ -71,9 +95,7 @@ export default function Login() {
                                 className="w-full"
                                 disabled={form.formState.isSubmitting}
                             >
-                                {form.formState.isSubmitting
-                                    ? "Loading..."
-                                    : "Login"}
+                              {isPendingLogin ? <Loader2 className="animate-spin"/> : 'login'}
                             </Button>
                         </Field>
                     </FieldGroup>
