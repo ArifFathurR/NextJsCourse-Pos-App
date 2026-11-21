@@ -36,7 +36,7 @@ export async function updateSession(request: NextRequest) {
   // 2. Jika SUDAH login dan mencoba membuka halaman /login -> lempar ke /admin
   if (user && request.nextUrl.pathname === '/login') {
     const url = request.nextUrl.clone();
-    url.pathname = '/admin';
+    url.pathname = '/';
     return NextResponse.redirect(url);
   }
   
